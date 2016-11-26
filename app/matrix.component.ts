@@ -1,4 +1,15 @@
-import { AfterContentInit, Component, ElementRef } from '@angular/core';
+import {
+  Input,
+  AfterContentInit,
+  Component,
+  ElementRef,
+  SimpleChanges,
+  OnChanges
+} from '@angular/core';
+
+import { MatrixData, MatrixOptions } from './interfaces';
+
+// todo: refactor this out
 declare var d3:any;
 declare var KashMatrix:any;
 
@@ -7,31 +18,46 @@ declare var KashMatrix:any;
   template: `<ng-content></ng-content>`
 })
 
-export class MatrixComponent implements AfterContentInit {
+export class MatrixComponent implements AfterContentInit, OnChanges {
 
   constructor(private elementRef: ElementRef) {}
 
-  ngAfterContentInit() {
-
-    const chart = KashMatrix();
-    const element = this.elementRef.nativeElement;
-
-    let matrix = {
-      data: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
-      options: {
-        width: 400,
-        height: 400
-      }
-    };
-
-    for (let key in matrix.options) {
-      let val = matrix.options[key];
-      chart[key](val);
+  @Input() data: MatrixData = [];
+  @Input() options: MatrixOptions = {};
+  chart: any = KashMatrix();
+  svg: any;
+  render () {
+    if (!this.svg || !this.chart) return;
+    this.svg.call(this.chart);
+  }
+  private dataUpdate(data: MatrixData){
+    if (!this.svg || !data) return;
+    this.svg.datum(data);
+  }
+  private optionsUpdate(options: MatrixOptions){
+    for (let key in options) {
+      let val = options[key];
+      this.chart[key](val);
     }
+  }
 
-    let svg = d3.select(element).append("svg");
+  ngAfterContentInit() {
+    const element = this.elementRef.nativeElement;
+    if (!element) return;
+    this.svg = d3.select(element).append("svg");
+  }
 
-    svg.datum(matrix.data).call(chart)
+  ngOnChanges(changes: SimpleChanges) {
+
+    let options = changes['options'];
+    if (options && options.currentValue)
+      this.optionsUpdate(options.currentValue);
+
+    let data = changes['data'];
+    if (data && data.currentValue['length'])
+      this.dataUpdate(data.currentValue);
+
+    this.render()
   }
 
 }
