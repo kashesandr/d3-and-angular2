@@ -9,53 +9,55 @@ import {
 
 import { MatrixData, MatrixOptions } from './interfaces';
 
-// todo: refactor this out
-declare var d3:any;
-declare var KashMatrix:any;
+declare let d3: any; // reference to window.d3
+declare let KashMatrix: any; // reference to window.KashMatrix
 
 @Component({
   selector: 'd3-matrix',
-  template: `<ng-content></ng-content>`
+  template: ``
 })
 
 export class MatrixComponent implements AfterContentInit, OnChanges {
 
+  // necessary to get the element
   constructor(private elementRef: ElementRef) {}
 
+  // data provided by attributes
   @Input() data: MatrixData = [];
   @Input() options: MatrixOptions = {};
-  chart: any = KashMatrix();
-  svg: any;
+
+  svgElement: any = {};
+  chartModel: any = KashMatrix();
+
   render () {
-    if (!this.svg || !this.chart) return;
-    this.svg.call(this.chart);
+    if (!this.svgElement || !this.chartModel) return;
+    this.svgElement.call(this.chartModel); // render the chart
   }
+
   private dataUpdate(data: MatrixData){
-    if (!this.svg || !data) return;
-    this.svg.datum(data);
+    if (!this.svgElement || !data['length']) return;
+    this.svgElement.datum(data);
   }
+
   private optionsUpdate(options: MatrixOptions){
-    for (let key in options) {
-      let val = options[key];
-      this.chart[key](val);
-    }
+    if (!options) return;
+    for (let key in options)
+      this.chartModel[key](options[key]);
   }
 
   ngAfterContentInit() {
     const element = this.elementRef.nativeElement;
     if (!element) return;
-    this.svg = d3.select(element).append("svg");
+    this.svgElement = d3.select(element).append("svgElement");
   }
 
   ngOnChanges(changes: SimpleChanges) {
 
     let options = changes['options'];
-    if (options && options.currentValue)
-      this.optionsUpdate(options.currentValue);
+    if (options) this.optionsUpdate(options.currentValue);
 
     let data = changes['data'];
-    if (data && data.currentValue['length'])
-      this.dataUpdate(data.currentValue);
+    if (data) this.dataUpdate(data.currentValue);
 
     this.render()
   }

@@ -3,10 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Matrix, MatrixOptions } from './interfaces';
 import { DataService } from './data.service';
 
-const options: MatrixOptions = {
-  width: 400,
-  height: 400
-};
+// options to be applied to chart
+const options: MatrixOptions = { width: 400, height: 400 };
 
 @Component({
   selector: 'my-app',
