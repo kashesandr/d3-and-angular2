@@ -10,8 +10,13 @@ const options: MatrixOptions = { width: 400, height: 400 };
   selector: 'my-app',
   providers: [DataService],
   template: `
-    <d3-matrix [data]="matrix.data" [options]="matrix.options"></d3-matrix>
-  `
+    <div id="app">
+        <d3-matrix [data]="matrix.data" [options]="matrix.options" ></d3-matrix>
+    </div>
+  `,
+  styles: [`
+    #app { width: 400px; margin: auto; }
+  `]
 })
 
 export class AppComponent implements OnInit {
@@ -19,6 +24,7 @@ export class AppComponent implements OnInit {
   constructor(private dataService: DataService) {
     this.matrix = { data: [], options: options };
   }
+
   ngOnInit(): void {
     this.dataService.getMatrixData().then(
       data => this.matrix.data = data

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { MatrixData } from './interfaces';
 
-// todo: update to use not a stub
+// todo: update not to use the stub
 import { MATRIX_DATA } from './mock-matrix-data';
 
 @Injectable()
