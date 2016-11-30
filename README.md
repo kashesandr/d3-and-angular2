@@ -1,7 +1,3 @@
-# Setup
-
-`npm install`
-
-# Run
+# Setun and run
 
 `npm start`
