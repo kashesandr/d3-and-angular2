@@ -21,13 +21,17 @@ export class MatrixComponent implements AfterContentInit, OnChanges {
 
   // necessary to get the element
   constructor(private elementRef: ElementRef) {}
-
   // data provided by attributes
   @Input() data: MatrixData = [];
   @Input() options: MatrixOptions = {};
-
   svgElement: any = null;
   chartModel: any = KashMatrix();
+
+  ngAfterContentInit() {
+    const element = this.elementRef.nativeElement;
+    if (!element) return;
+    this.svgElement = d3.select(element).append("svg");
+  }
 
   render () {
     if (!this.svgElement || !this.chartModel) return;
@@ -45,21 +49,12 @@ export class MatrixComponent implements AfterContentInit, OnChanges {
       this.chartModel[key](options[key]);
   }
 
-  ngAfterContentInit() {
-    const element = this.elementRef.nativeElement;
-    if (!element) return;
-    this.svgElement = d3.select(element).append("svg");
-  }
-
   ngOnChanges(changes: SimpleChanges) {
-
-    let options = changes['options'];
-    if (options) this.optionsUpdate(options.currentValue);
-
+    let opts = changes['options'];
+    if (opts) this.optionsUpdate(opts.currentValue);
     let data = changes['data'];
     if (data) this.dataUpdate(data.currentValue);
-
-    this.render()
+    if (data || opts) this.render()
   }
 
 }
