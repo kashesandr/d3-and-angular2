@@ -4,11 +4,11 @@ export interface MatrixData {
   [index: number]: number
 }
 
-export interface MatrixOptions {
+export interface MatrixOpts {
   [method: string]: any;
 }
 
 export class Matrix {
   data: MatrixData;
-  options: MatrixOptions;
+  opts: MatrixOpts;
 }
